@@ -1,11 +1,13 @@
 // Recipe Details page: src/components/RecipeDetails.jsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 function RecipeDetails(){
     const {id} = useParams();
     const [recipe, setRecipes] = useState(null);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favorites')) || []);
     useEffect(() =>{
         const fetchRecipe = async () => {
             try {
@@ -23,6 +25,16 @@ function RecipeDetails(){
         };
         fetchRecipe();
     }, [id]);
+    useEffect(() => {
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }, [favorites]);
+    const toggleFavorite = () => {
+        if (!recipe) return;
+        const updatedFavorites = favorites.some(fav => fav.idMeal === recipe.idMeal)
+            ? favorites.filter(fav => fav.idMeal !== recipe.idMeal)
+            : [...favorites, recipe];
+        setFavorites(updatedFavorites);
+    };
     if (!recipe) {
         return <p className='text-center'>Loading...</p>
     }
@@ -34,6 +46,12 @@ function RecipeDetails(){
                 alt={recipe.strMeal}
                 className='w-full max-w-md mx-auto rounded-lg shadow-lg mb-4'
             />
+            <button
+                onClick={toggleFavorite} className={`px-3 py-2 rounded ${favorites.some(fav => fav.idMeal === recipe.idMeal) ? 'bg-red-500 text-white' : 'bg-gray-300'}`}
+            >
+                {favorites.some(fav => fav.idMeal === recipe.idMeal) ? 'Remove from Favorites' : 'Add to Favorites'}
+            </button>
+            <button onClick={() => navigate('/')} className='ml-4 px-3 py-2 bg-blue-500 text-white rounded'>Back to Home</button>
             <div className='mb-4'>
                 <h2 className='text-xl font-semibold mb-2'>Ingredients</h2>
                 <ul className='list-disc list-inside'>

@@ -1,11 +1,15 @@
 // Home page: src/components/Home.jsx
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 function HomePage(){
     const [query, setQuery] = useState('');
     const [recipes, setRecipes] = useState([]);
     const [error, setError] = useState('');
+    const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favorites')) || []);
+    useEffect(() =>{
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }, [favorites]);
     const fetchRecipes = async () => {
         try {
             setError('');
@@ -20,6 +24,12 @@ function HomePage(){
             setError('Failed to fetch recipes. Kindly try again later');
         }
     };
+    const toggleFavorite = (recipe) => {
+        const updatedFavorites = favorites.some(fave => fave.idMeal === recipe.idMeal)
+            ? favorites.filter(fav => fav.idMeal !== recipe.idMeal)
+            : [...favorites, recipe];
+        setFavorites(updatedFavorites);
+    }
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold text-center mb-6">Recipe Finder</h1>
@@ -44,6 +54,12 @@ function HomePage(){
                             <h2 className="text-lg font-bold">{recipe.strMeal}</h2>
                             <p className="text-sm text-gray-600">{recipe.strCategory}</p>
                             <p className="text-sm text-gray-600">Cusine: {recipe.strArea}</p>
+                            <button
+                                className={`mt-2 px-3 py-1 rounded ${favorites.some(fav => fav.idMeal === recipe.idMeal) ? 'bg-red-500 text-white' : 'bg-gray-300' }`}
+                                onClick={() => toggleFavorite(recipe)}
+                            >
+                                {favorites.some(fav => fav.idMeal === recipe.idMeal) ? 'Remove from Favorites' : 'Add to Favorites'}
+                            </button>
                             <Link to={`/recipe/${recipe.idMeal}`} className="text-sm hover: underline mt-2 inline-block">
                                 View Details
                             </Link>
@@ -52,6 +68,23 @@ function HomePage(){
                     </div>
                 ))}
 
+            </div>
+            <h2 className="text-2xl font-bold text-center mt-6">Favorite list</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+                {favorites.map((recipe) => (
+                    <div key={recipe.idMeal} className="border rounded-lg overflow-hidden shadow-lg bg-white">
+                        <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-48 object-cover" />
+                        <div className="p-4">
+                            <h2 className="text-lg font-bold">{recipe.strMeal}</h2>
+                            <button
+                                className="mt-2 px-3 py-1 rounded bg-red-500 text-white"
+                                onClick={() => toggleFavorite(recipe)}
+                            >
+                                Remove from Favorites
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
 
         </div>
