@@ -8,6 +8,7 @@ function RecipeDetails(){
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favorites')) || []);
+    const [shoppingList, setShoppingList] = useState(JSON.parse(localStorage.getItem('shoppingList')) || []);
     useEffect(() =>{
         const fetchRecipe = async () => {
             try {
@@ -35,6 +36,13 @@ function RecipeDetails(){
             : [...favorites, recipe];
         setFavorites(updatedFavorites);
     };
+useEffect(() => {
+    localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+}, [shoppingList]);
+const addToShoppingList = (ingredient, measure) => {
+    const updatedList = [...shoppingList, {ingredient, measure, quantity: 1}];
+    setShoppingList(updatedList);
+}
     if (!recipe) {
         return <p className='text-center'>Loading...</p>
     }
@@ -62,6 +70,12 @@ function RecipeDetails(){
                             ingredient && (
                                 <li key={num}>
                                     {ingredient} - {measure}
+                                    <button
+                                        onClick={() => addToShoppingList(ingredient, measure)}
+                                        className='bg-green-500 text-white px-2 py-1 rounded text-sm'
+                                    >
+                                        Add to Shopping List
+                                    </button>
                                 </li>
                             )
                         );
@@ -86,6 +100,7 @@ function RecipeDetails(){
                     ></iframe>
                 </div>
             )}
+            <button onClick={() => navigate('/shopping-list')} className='px-4 py-2 bg-purple-500 text-white rounded'>View Shopping List</button>
         </div>
     );
 }

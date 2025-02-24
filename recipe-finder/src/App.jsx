@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './components/Home';
 import RecipeDetails from './components/RecipeDetails';
+import ShoppingList from './components/ShoppingList';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/recipe/:id" element={<RecipeDetails />} />
+        <Route path="/shopping-list" element={<ShoppingList />} />
       </Routes>
     </div>
   );
