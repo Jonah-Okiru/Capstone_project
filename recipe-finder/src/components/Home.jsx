@@ -7,9 +7,22 @@ function HomePage(){
     const [recipes, setRecipes] = useState([]);
     const [error, setError] = useState('');
     const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem('favorites')) || []);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
     useEffect(() =>{
         localStorage.setItem('favorites', JSON.stringify(favorites));
     }, [favorites]);
+    useEffect(() =>{
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get('https://www.themealdb.com/api/json/v1/1/categories.php');
+                setCategories(response.data.categories.map(cat => cat.strCategory));
+            } catch (err) {
+                console.error('Failed to fetch categories');
+            }
+        };
+        fetchCategories();
+    }, []);
     const fetchRecipes = async () => {
         try {
             setError('');
@@ -24,6 +37,15 @@ function HomePage(){
             setError('Failed to fetch recipes. Kindly try again later');
         }
     };
+    const fetchRecipesByCategory = async (category) => {
+        try {
+            setError('');
+            const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`);
+            setRecipes(response.data.meals || []);
+        } catch (err) {
+            setError('Failed to fetch recipes by category. Try again later.');
+        }
+    }
     const toggleFavorite = (recipe) => {
         const updatedFavorites = favorites.some(fave => fave.idMeal === recipe.idMeal)
             ? favorites.filter(fav => fav.idMeal !== recipe.idMeal)
@@ -44,6 +66,21 @@ function HomePage(){
                 <button onClick={fetchRecipes} className="bg-blue-500 text-white rounded-r-lg px-4 py-2 hover: bg-blue-600">
                     Search
                 </button>
+            </div>
+            <div className="flex justify-center mt-4">
+                <select 
+                    onChange={(e) =>{
+                        setSelectedCategory(e.target.value)
+                        fetchRecipesByCategory(e.target.value)
+                    }}
+                    value={selectedCategory}
+                    className="border rounded p-2"
+                >
+                    <option value="">Select a Category</option>
+                    {categories.map(category => (
+                        <option key={category} value={category}>{category}</option>
+                    ))}
+                </select>
             </div>
             {error && <p className="text-red-500 text-center">{error}</p>}
             <div className="grid grid-cols-1 md: grid-cols-2 lg:grid-cols-4 gap-3">
