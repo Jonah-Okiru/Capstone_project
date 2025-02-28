@@ -83,12 +83,12 @@ function HomePage(){
                 </select>
             </div>
             {error && <p className="text-red-500 text-center">{error}</p>}
-            <div className="grid grid-cols-1 md: grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="bg-pink-400 grid grid-cols-1 md: grid-cols-2 lg:grid-cols-4 gap-3">
                 {recipes.map((recipe) =>(
                     <div key={recipe.idMeal} className="border rounded-lg overflow-hidden shadow-lg bg-white">
                         <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-48 object-cover" />
                         <div className="p-4">
-                            <h2 className="text-lg font-bold">{recipe.strMeal}</h2>
+                            <h2 className="text-lg font-bold text-gray-600">{recipe.strMeal}</h2>
                             <p className="text-sm text-gray-600">{recipe.strCategory}</p>
                             <p className="text-sm text-gray-600">Cusine: {recipe.strArea}</p>
                             <button
@@ -97,7 +97,7 @@ function HomePage(){
                             >
                                 {favorites.some(fav => fav.idMeal === recipe.idMeal) ? 'Remove from Favorites' : 'Add to Favorites'}
                             </button>
-                            <Link to={`/recipe/${recipe.idMeal}`} className="text-sm hover: underline mt-2 inline-block">
+                            <Link to={`/recipe/${recipe.idMeal}`} className="text-sm bg-green-300  hover: underline mt-2 inline-block">
                                 View Details
                             </Link>
 

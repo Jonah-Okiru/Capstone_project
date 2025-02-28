@@ -35,7 +35,7 @@ function ShoppingList() {
                             value={item.quantity}
                             min="1"
                             onChange={(e) => updateQuantity(index, e.target.value)}
-                            className="w-16 text-center border rounded ml-2"
+                            className="w-16 text-center border rounded ml-2 bg-blue-600"
                         />
                         <button
                             onClick={() => removeItem(index)}
