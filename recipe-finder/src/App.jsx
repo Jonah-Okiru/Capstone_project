@@ -5,10 +5,11 @@ import RecipeDetails from './components/RecipeDetails';
 import ShoppingList from './components/ShoppingList';
 
 function App() {
+  // State to manage dark mode, retrieving initial value from local storage
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem('darkMode') === 'true'
   );
-
+  // Effect to update local storage and apply dark mode class to the document
   useEffect(() => {
     localStorage.setItem('darkMode', darkMode);
     if (darkMode) {
@@ -20,6 +21,7 @@ function App() {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black-800'}`}>
+      {/* Dark mode toggle button */}
       <div className="flex justify-end p-4">
         <button 
           onClick={() => setDarkMode(!darkMode)} 
@@ -28,6 +30,7 @@ function App() {
           {darkMode ? 'Light Mode' : 'Dark Mode'}
         </button>
       </div>
+      {/* Application Routes */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/recipe/:id" element={<RecipeDetails />} />
